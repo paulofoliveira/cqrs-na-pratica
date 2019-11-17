@@ -83,8 +83,83 @@ namespace API.Controllers
             return Ok();
         }
 
+        [HttpPost("{id}/inscricoes")]
+        public IActionResult Inscrever(long id, [FromBody]AlunoInscricaoDto dto)
+        {
+            var aluno = _alunoRepositorio.RecuperarPorId(id);
+
+            if (aluno == null)
+                return Error($"Nenhum aluno encontrado com o Id {id}");
+
+            var curso = _cursoRepositorio.RecuperarPorNome(dto.Curso);
+
+            if (curso == null)
+                return Error($"O curso é incorreto: {dto.Curso}.");
+
+            var gradeSucesso = Enum.TryParse(dto.Grade, out Grade grade);
+
+            if (!gradeSucesso)
+                return Error($"A grade é incorreta: {dto.Grade}.");
+
+            aluno.Inscrever(curso, grade);
+            _unitOfWork.Commit();
+
+            return Ok();
+        }
+
+        [HttpPut("{id}/inscricoes/{numeroInscricao}")]
+        public IActionResult Transferir(long id, int numeroInscricao, [FromBody]AlunoTransferenciaDto dto)
+        {
+            var aluno = _alunoRepositorio.RecuperarPorId(id);
+
+            if (aluno == null)
+                return Error($"Nenhum aluno encontrado com o Id {id}");
+
+            var curso = _cursoRepositorio.RecuperarPorNome(dto.Curso);
+
+            if (curso == null)
+                return Error($"O curso é incorreto: {dto.Curso}.");
+
+            var gradeSucesso = Enum.TryParse(dto.Grade, out Grade grade);
+
+            if (!gradeSucesso)
+                return Error($"A grade é incorreta: {dto.Grade}.");
+
+            var inscricao = aluno.RecuperarInscricao(numeroInscricao);
+
+            if (inscricao == null)
+                return Error($"Nenhuma inscrição encontrada com o número: {numeroInscricao}");
+
+            inscricao.Atualizar(curso, grade);
+            _unitOfWork.Commit();
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/inscricoes/{numeroInscricao}/excluir")]
+        public IActionResult Desinscricao(long id, int numeroInscricao, [FromBody]AlunoDesinscricaoDto dto)
+        {
+            var aluno = _alunoRepositorio.RecuperarPorId(id);
+
+            if (aluno == null)
+                return Error($"Nenhum aluno encontrado com o Id {id}");
+
+            if (string.IsNullOrWhiteSpace(dto.Comentario))
+                return Error("Comentário de desinscrição é requerido.");
+
+            var inscricao = aluno.RecuperarInscricao(numeroInscricao);
+
+            if (inscricao == null)
+                return Error($"Nenhuma inscrição encontrada com o número: {numeroInscricao}");
+            aluno.RemoverInscricao(inscricao, dto.Comentario);
+
+            _unitOfWork.Commit();
+
+            return Ok();
+        }
+
         [HttpPut("{id}")]
-        public IActionResult Atualizar(long id, [FromBody] AlunoDto dto)
+        public IActionResult AtualizarInformacoesPessoais(long id, [FromBody]AlunoInformacoesPessoaisDto dto)
         {
             var aluno = _alunoRepositorio.RecuperarPorId(id);
 
@@ -94,77 +169,9 @@ namespace API.Controllers
             aluno.Nome = dto.Nome;
             aluno.Email = dto.Email;
 
-            var primeiraInscricao = aluno.PrimeiraInscricao;
-            var segundaInscricao = aluno.SegundaInscricao;
-
-            if (TemInscricaoAlterada(dto.Curso1, dto.Curso1Grade, primeiraInscricao))
-            {
-                if (string.IsNullOrWhiteSpace(dto.Curso1)) // Desinscrever o aluno.
-                {
-                    if (string.IsNullOrWhiteSpace(dto.Curso1ComentarioDesincricao))
-                        return Error("Comentário na desincrição é obrigatório.");
-
-                    var inscricao = primeiraInscricao;
-                    aluno.RemoverInscricao(inscricao);
-                    aluno.AdicionarComentarioDeDesincricao(inscricao, dto.Curso1ComentarioDesincricao);
-                }
-
-                if (string.IsNullOrWhiteSpace(dto.Curso1Grade))
-                    return Error("Grade é obrigatória.");
-
-                var curso = _cursoRepositorio.RecuperarPorNome(dto.Curso1);
-
-                if (primeiraInscricao == null)
-                {
-                    aluno.Inscrever(curso, Enum.Parse<Grade>(dto.Curso1Grade)); // Inscreve o aluno.
-                }
-                else
-                {
-                    primeiraInscricao.Atualizar(curso, Enum.Parse<Grade>(dto.Curso1Grade)); // Transfere o aluno.
-                }
-            }
-
-            if (TemInscricaoAlterada(dto.Curso2, dto.Curso2Grade, segundaInscricao))
-            {
-                if (string.IsNullOrWhiteSpace(dto.Curso2)) // Desincrever aluno.
-                {
-                    if (string.IsNullOrWhiteSpace(dto.Curso2ComentarioDesincricao))
-                        return Error("Comentário na desincrição é obrigatório.");
-
-                    var inscricao = segundaInscricao;
-                    aluno.RemoverInscricao(inscricao);
-                    aluno.AdicionarComentarioDeDesincricao(inscricao, dto.Curso2ComentarioDesincricao);
-                }
-
-                if (string.IsNullOrWhiteSpace(dto.Curso2Grade))
-                    return Error("Grade é obrigatória.");
-
-                var curso = _cursoRepositorio.RecuperarPorNome(dto.Curso2);
-
-                if (segundaInscricao == null)
-                {          
-                    aluno.Inscrever(curso, Enum.Parse<Grade>(dto.Curso2Grade));  // Inscreve o aluno.
-                }
-                else
-                {          
-                    segundaInscricao.Atualizar(curso, Enum.Parse<Grade>(dto.Curso2Grade));  // Transfere o aluno.
-                }
-            }
-
             _unitOfWork.Commit();
 
             return Ok();
-        }
-
-        private bool TemInscricaoAlterada(string novoCursoNome, string novaGrade, Inscricao inscricao)
-        {
-            if (string.IsNullOrWhiteSpace(novoCursoNome) && inscricao == null)
-                return false;
-
-            if (string.IsNullOrWhiteSpace(novoCursoNome) || inscricao == null)
-                return true;
-
-            return novoCursoNome != inscricao.Curso.Nome || novaGrade != inscricao.Grade.ToString();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Logica.Alunos
             Email = email;
         }
 
-        private Inscricao RecuperarInscricao(int index)
+        public virtual Inscricao RecuperarInscricao(int index)
         {
             if (_inscricoes.Count > index)
                 return _inscricoes[index];
@@ -36,14 +36,11 @@ namespace Logica.Alunos
             return null;
         }
 
-        public virtual void RemoverInscricao(Inscricao inscricao)
+        public virtual void RemoverInscricao(Inscricao inscricao, string comentario)
         {
             _inscricoes.Remove(inscricao);
-        }
 
-        public virtual void AdicionarComentarioDeDesincricao(Inscricao inscricao, string comment)
-        {
-            var desincricao = new Desinscricao(inscricao.Aluno, inscricao.Curso, comment);
+            var desincricao = new Desinscricao(inscricao.Aluno, inscricao.Curso, comentario);
             _desincricoes.Add(desincricao);
         }
 
