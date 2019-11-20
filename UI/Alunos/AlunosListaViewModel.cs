@@ -14,7 +14,7 @@ namespace UI.Alunos
 
         public Command PesquisarCommand { get; }
         public Command CriarAlunoCommand { get; }
-        public Command<AlunoDto> AtualizarAlunoCommand { get; }
+        public Command<AlunoDto> EditarInformacoesPessoaisCommand { get; }
         public Command<AlunoDto> ExcluirAlunoCommand { get; }
         public IReadOnlyList<AlunoDto> Alunos { get; private set; }
 
@@ -22,7 +22,7 @@ namespace UI.Alunos
         {
             PesquisarCommand = new Command(Pesquisar);
             CriarAlunoCommand = new Command(CriarAluno);
-            AtualizarAlunoCommand = new Command<AlunoDto>(p => p != null, AtualizarAluno);
+            EditarInformacoesPessoaisCommand = new Command<AlunoDto>(p => p != null, EditarInformacoesPessoais);
             ExcluirAlunoCommand = new Command<AlunoDto>(p => p != null, ExcluirAluno);
 
             Pesquisar();
@@ -35,9 +35,9 @@ namespace UI.Alunos
             Pesquisar();
         }
 
-        private void AtualizarAluno(AlunoDto dto)
+        private void EditarInformacoesPessoais(AlunoDto dto)
         {
-            var viewModel = new AlunoViewModel(dto);
+            var viewModel = new EditarInformacoesPessoaisViewModel(dto.Id, dto.Nome, dto.Email);
             _dialogService.ShowDialog(viewModel);
 
             Pesquisar();
