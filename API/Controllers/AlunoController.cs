@@ -47,7 +47,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Criar([FromBody] AlunoDto dto)
+        public IActionResult Registrar([FromBody] NovoAlunoDto dto)
         {
             var aluno = new Aluno(dto.Nome, dto.Email);
 
@@ -70,7 +70,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Excluir(long id)
+        public IActionResult Desregistrar(long id)
         {
             var aluno = _alunoRepositorio.RecuperarPorId(id);
 
