@@ -13,7 +13,7 @@ namespace UI.Alunos
         public string NumeroDeCursosSelecionado { get; set; } = "";
 
         public Command PesquisarCommand { get; }
-        public Command CriarAlunoCommand { get; }
+        public Command RegistrarAlunoCommand { get; }
         public Command<AlunoDto> EditarInformacoesPessoaisCommand { get; }
         public Command<AlunoDto> ExcluirAlunoCommand { get; }
         public IReadOnlyList<AlunoDto> Alunos { get; private set; }
@@ -21,7 +21,7 @@ namespace UI.Alunos
         public AlunosListaViewModel()
         {
             PesquisarCommand = new Command(Pesquisar);
-            CriarAlunoCommand = new Command(CriarAluno);
+            RegistrarAlunoCommand = new Command(RegistrarAluno);
             EditarInformacoesPessoaisCommand = new Command<AlunoDto>(p => p != null, EditarInformacoesPessoais);
             ExcluirAlunoCommand = new Command<AlunoDto>(p => p != null, ExcluirAluno);
 
@@ -43,9 +43,9 @@ namespace UI.Alunos
             Pesquisar();
         }
 
-        private void CriarAluno()
+        private void RegistrarAluno()
         {
-            var viewModel = new AlunoViewModel();
+            var viewModel = new RegistrarAlunoViewModel();
             _dialogService.ShowDialog(viewModel);
 
             Pesquisar();
