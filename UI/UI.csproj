@@ -62,7 +62,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Alunos\AlunosListaViewModel.cs" />
-    <Compile Include="Alunos\AlunoViewModel.cs" />
     <Page Include="Alunos\EditarInformacoesPessoaisView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -107,10 +106,6 @@
     </Compile>
     <Compile Include="Common\ViewModel.cs" />
     <Page Include="Alunos\AlunosListaView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Alunos\AlunoView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
