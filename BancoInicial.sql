@@ -24,14 +24,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Desinscricao](
-	[DesincricaoID] [bigint] IDENTITY(1,1) NOT NULL,
+	[DesinscricaoID] [bigint] IDENTITY(1,1) NOT NULL,
 	[CursoID] [bigint] NOT NULL,
 	[AlunoID] [bigint] NOT NULL,
 	[Data] [DateTime] NOT NULL,
 	[Comentario] [nvarchar](max) NOT NULL,
  CONSTRAINT [PK_Desincricao] PRIMARY KEY CLUSTERED 
 (
-	[DesincricaoID] ASC
+	[DesinscricaoID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
