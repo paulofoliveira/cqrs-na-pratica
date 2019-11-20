@@ -25,6 +25,42 @@ namespace UI.API
             return result.Value;
         }
 
+        public static async Task<Result> EditarInformacoesPessoais(AlunoInformacoesPessoaisDto dto)
+        {
+            var result = await SendRequest<string>("/" + dto.Id, HttpMethod.Put, dto).ConfigureAwait(false);
+            return result;
+        }
+
+        public static async Task<Result> Inscrever(AlunoInscricaoDto dto)
+        {
+            Result result = await SendRequest<string>($"/{dto.Id}/inscricoes", HttpMethod.Post, dto).ConfigureAwait(false);
+            return result;
+        }
+
+        public static async Task<Result> Transferir(AlunoTransferenciaDto dto)
+        {
+            Result result = await SendRequest<string>($"/{dto.Id}/inscricoes/{dto.NumeroInscricao}", HttpMethod.Put, dto).ConfigureAwait(false);
+            return result;
+        }
+
+        public static async Task<Result> Registrar(NovoAlunoDto dto)
+        {
+            Result result = await SendRequest<string>("/", HttpMethod.Post, dto).ConfigureAwait(false);
+            return result;
+        }
+
+        public static async Task<Result> Desinscrever(AlunoDesinscricaoDto dto)
+        {
+            Result result = await SendRequest<string>($"/{dto.Id}/inscricoes/{dto.NumeroInscricao}/excluir", HttpMethod.Post, dto).ConfigureAwait(false);
+            return result;
+        }
+
+        public static async Task<Result> Desregistrar(long id)
+        {
+            Result result = await SendRequest<string>("/" + id, HttpMethod.Delete).ConfigureAwait(false);
+            return result;
+        }
+
         public static async Task<Result> Criar(AlunoDto dto)
         {
             var result = await SendRequest<string>("/", HttpMethod.Post, dto).ConfigureAwait(false);
