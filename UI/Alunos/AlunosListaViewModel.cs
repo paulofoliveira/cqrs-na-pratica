@@ -12,13 +12,13 @@ namespace UI.Alunos
 
         public string CursoSelecionado { get; set; } = "";
         public string NumeroDeCursosSelecionado { get; set; } = "";
-
+        public Command<long> TransferirAlunoCommand { get; }
         public Command<long> InscreverAlunoCommand { get; }
-
         public Command PesquisarCommand { get; }
         public Command RegistrarAlunoCommand { get; }
         public Command<AlunoDto> EditarInformacoesPessoaisCommand { get; }
         public Command<AlunoDto> ExcluirAlunoCommand { get; }
+
         public IReadOnlyList<AlunoDto> Alunos { get; private set; }
 
         public AlunosListaViewModel()
@@ -28,6 +28,15 @@ namespace UI.Alunos
             EditarInformacoesPessoaisCommand = new Command<AlunoDto>(p => p != null, EditarInformacoesPessoais);
             ExcluirAlunoCommand = new Command<AlunoDto>(p => p != null, ExcluirAluno);
             InscreverAlunoCommand = new Command<long>(Inscrever);
+            TransferirAlunoCommand = new Command<long>(Transferir);
+
+            Pesquisar();
+        }
+
+        private void Transferir(long alunoId)
+        {
+            var viewModel = new TransferirAlunoViewModel(alunoId);
+            _dialogService.ShowDialog(viewModel);
 
             Pesquisar();
         }
@@ -70,6 +79,7 @@ namespace UI.Alunos
             foreach (var aluno in Alunos)
             {
                 aluno.InscreverAlunoCommand = InscreverAlunoCommand;
+                aluno.TransferirAlunoCommand = TransferirAlunoCommand;                
             }
 
             Notify(nameof(Alunos));
