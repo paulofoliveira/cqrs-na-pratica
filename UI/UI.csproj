@@ -66,6 +66,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Alunos\InscreverAlunoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Alunos\RegistrarAlunoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -83,6 +87,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Alunos\EditarInformacoesPessoaisViewModel.cs" />
+    <Compile Include="Alunos\InscreverAlunoViewModel.cs" />
     <Compile Include="Alunos\RegistrarAlunoViewModel.cs" />
     <Compile Include="API\ApiClient.cs" />
     <Compile Include="API\AlunoDto.cs" />

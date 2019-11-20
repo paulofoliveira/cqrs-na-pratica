@@ -1,4 +1,5 @@
 ﻿using System;
+using UI.Common;
 
 namespace UI.API
 {
@@ -13,6 +14,8 @@ namespace UI.API
         public string Curso2 { get; set; }
         public string Curso2Grade { get; set; }   
         public int? Curso2Creditos { get; set; }
+
+        public Command<long> InscreverAlunoCommand { get; set; }
     }
     public class Envelope<T>
     {
