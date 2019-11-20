@@ -17,6 +17,7 @@ namespace UI.API
 
         public Command<long> InscreverAlunoCommand { get; set; }
         public Command<long> TransferirAlunoCommand { get; set; }
+        public Command<long> DesinscreverAlunoCommand { get; set; }
     }
     public class Envelope<T>
     {

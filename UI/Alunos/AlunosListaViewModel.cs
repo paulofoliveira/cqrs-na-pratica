@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UI.API;
 using UI.Common;
 
@@ -14,6 +13,7 @@ namespace UI.Alunos
         public string NumeroDeCursosSelecionado { get; set; } = "";
         public Command<long> TransferirAlunoCommand { get; }
         public Command<long> InscreverAlunoCommand { get; }
+        public Command<long> DesinscreverAlunoCommand { get; }
         public Command PesquisarCommand { get; }
         public Command RegistrarAlunoCommand { get; }
         public Command<AlunoDto> EditarInformacoesPessoaisCommand { get; }
@@ -29,6 +29,15 @@ namespace UI.Alunos
             ExcluirAlunoCommand = new Command<AlunoDto>(p => p != null, ExcluirAluno);
             InscreverAlunoCommand = new Command<long>(Inscrever);
             TransferirAlunoCommand = new Command<long>(Transferir);
+            DesinscreverAlunoCommand = new Command<long>(Desinscrever);
+
+            Pesquisar();
+        }
+
+        private void Desinscrever(long alunoId)
+        {
+            var viewModel = new DesinscreverAlunoViewModel(alunoId, 1);
+            _dialogService.ShowDialog(viewModel);
 
             Pesquisar();
         }
@@ -79,7 +88,8 @@ namespace UI.Alunos
             foreach (var aluno in Alunos)
             {
                 aluno.InscreverAlunoCommand = InscreverAlunoCommand;
-                aluno.TransferirAlunoCommand = TransferirAlunoCommand;                
+                aluno.TransferirAlunoCommand = TransferirAlunoCommand;
+                aluno.DesinscreverAlunoCommand = DesinscreverAlunoCommand;
             }
 
             Notify(nameof(Alunos));
