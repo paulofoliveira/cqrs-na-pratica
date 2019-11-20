@@ -55,25 +55,7 @@ namespace UI.API
             return result;
         }
 
-        public static async Task<Result> Desregistrar(long id)
-        {
-            Result result = await SendRequest<string>("/" + id, HttpMethod.Delete).ConfigureAwait(false);
-            return result;
-        }
-
-        public static async Task<Result> Criar(AlunoDto dto)
-        {
-            var result = await SendRequest<string>("/", HttpMethod.Post, dto).ConfigureAwait(false);
-            return result;
-        }
-
-        public static async Task<Result> Atualizar(AlunoDto dto)
-        {
-            var result = await SendRequest<string>("/" + dto.Id, HttpMethod.Put, dto).ConfigureAwait(false);
-            return result;
-        }
-
-        public static async Task<Result> Excluir(long id)
+        public static async Task<Result> Desresgistrar(long id)
         {
             var result = await SendRequest<string>("/" + id, HttpMethod.Delete).ConfigureAwait(false);
             return result;

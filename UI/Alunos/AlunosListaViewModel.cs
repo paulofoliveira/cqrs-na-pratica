@@ -17,7 +17,7 @@ namespace UI.Alunos
         public Command PesquisarCommand { get; }
         public Command RegistrarAlunoCommand { get; }
         public Command<AlunoDto> EditarInformacoesPessoaisCommand { get; }
-        public Command<AlunoDto> ExcluirAlunoCommand { get; }
+        public Command<AlunoDto> DesregistrarAlunoCommand { get; }
 
         public IReadOnlyList<AlunoDto> Alunos { get; private set; }
 
@@ -26,7 +26,7 @@ namespace UI.Alunos
             PesquisarCommand = new Command(Pesquisar);
             RegistrarAlunoCommand = new Command(RegistrarAluno);
             EditarInformacoesPessoaisCommand = new Command<AlunoDto>(p => p != null, EditarInformacoesPessoais);
-            ExcluirAlunoCommand = new Command<AlunoDto>(p => p != null, ExcluirAluno);
+            DesregistrarAlunoCommand = new Command<AlunoDto>(p => p != null, DesresgistrarAluno);
             InscreverAlunoCommand = new Command<long>(Inscrever);
             TransferirAlunoCommand = new Command<long>(Transferir);
             DesinscreverAlunoCommand = new Command<long>(Desinscrever);
@@ -58,9 +58,9 @@ namespace UI.Alunos
             Pesquisar();
         }
 
-        private void ExcluirAluno(AlunoDto dto)
+        private void DesresgistrarAluno(AlunoDto dto)
         {
-            ApiClient.Excluir(dto.Id).ConfigureAwait(false).GetAwaiter().GetResult();
+            ApiClient.Desresgistrar(dto.Id).ConfigureAwait(false).GetAwaiter().GetResult();
 
             Pesquisar();
         }
