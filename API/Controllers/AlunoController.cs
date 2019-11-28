@@ -12,12 +12,14 @@ namespace API.Controllers
     public sealed class AlunoController : BaseController
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly Messages _messages;
         private readonly AlunoRepositorio _alunoRepositorio;
         private readonly CursoRepositorio _cursoRepositorio;
 
-        public AlunoController(UnitOfWork unitOfWork)
+        public AlunoController(UnitOfWork unitOfWork, Messages messages)
         {
             _unitOfWork = unitOfWork;
+            _messages = messages;
             _alunoRepositorio = new AlunoRepositorio(unitOfWork);
             _cursoRepositorio = new CursoRepositorio(unitOfWork);
         }
@@ -25,26 +27,11 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult GetLista(string cursoNome, int? numero)
         {
-            IReadOnlyList<Aluno> alunos = _alunoRepositorio.RecuperarLista(cursoNome, numero);
-            List<AlunoDto> dtos = alunos.Select(x => ConverterParaDto(x)).ToList();
-            return Ok(dtos);
-        }
+            var query = new RecuperarAlunosQuery(cursoNome, numero);
+            var lista = _messages.Dispatch(query);
 
-        private AlunoDto ConverterParaDto(Aluno aluno)
-        {
-            return new AlunoDto
-            {
-                Id = aluno.Id,
-                Nome = aluno.Nome,
-                Email = aluno.Email,
-                Curso1 = aluno.PrimeiraInscricao?.Curso?.Nome,
-                Curso1Grade = aluno.PrimeiraInscricao?.Grade.ToString(),
-                Curso1Creditos = aluno.PrimeiraInscricao?.Curso?.Creditos,
-                Curso2 = aluno.SegundaInscricao?.Curso?.Nome,
-                Curso2Grade = aluno.SegundaInscricao?.Grade.ToString(),
-                Curso2Creditos = aluno.SegundaInscricao?.Curso?.Creditos,
-            };
-        }
+            return Ok(lista);
+        }        
 
         [HttpPost]
         public IActionResult Registrar([FromBody] NovoAlunoDto dto)
@@ -161,17 +148,16 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public IActionResult AtualizarInformacoesPessoais(long id, [FromBody]AlunoInformacoesPessoaisDto dto)
         {
-            var aluno = _alunoRepositorio.RecuperarPorId(id);
+            var command = new EditarInformacoesPessoaisCommand()
+            {
+                Id = id,
+                Nome = dto.Nome,
+                Email = dto.Email
+            };
+            
+            var result = _messages.Dispatch(command);
 
-            if (aluno == null)
-                return Error($"Nenhum aluno encontrado com o Id {id}");
-
-            aluno.Nome = dto.Nome;
-            aluno.Email = dto.Email;
-
-            _unitOfWork.Commit();
-
-            return Ok();
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
     }
 }
