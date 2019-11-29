@@ -1,6 +1,5 @@
 ﻿using Logica.Models;
 using Logica.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,13 +11,13 @@ namespace Logica.Alunos
 
         public RecuperarAlunosQueryHandler(UnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public List<AlunoDto> Handle(RecuperarAlunosQuery query)
         {
             var alunos = new AlunoRepositorio(_unitOfWork).RecuperarLista(query.CursoNome, query.Numero);
-            var dtos = alunos.Select(x => ConverterParaDto(x)).ToList();
+            var dtos = alunos.Select(p => ConverterParaDto(p)).ToList();
             return dtos;
         }
 

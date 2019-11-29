@@ -27,7 +27,6 @@ namespace API
             services.AddTransient<UnitOfWork>();
 
             services.AddTransient<IQueryHandler<RecuperarAlunosQuery, List<AlunoDto>>, RecuperarAlunosQueryHandler>();
-
             services.AddTransient<ICommandHandler<EditarInformacoesPessoaisCommand>, EditarInformacoesPessoaisCommandHandler>();
 
             services.AddSingleton<Messages>();
