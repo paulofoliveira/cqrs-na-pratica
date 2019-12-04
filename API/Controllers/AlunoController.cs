@@ -31,118 +31,56 @@ namespace API.Controllers
             var lista = _messages.Dispatch(query);
 
             return Ok(lista);
-        }        
+        }
 
         [HttpPost]
         public IActionResult Registrar([FromBody] NovoAlunoDto dto)
         {
-            var aluno = new Aluno(dto.Nome, dto.Email);
+            var registrarCommand = new RegistrarAlunoCommand(dto.Nome, dto.Email, dto.Curso1, dto.Curso1Grade, dto.Curso2, dto.Curso2Grade);
 
-            if (dto.Curso1 != null && dto.Curso1Grade != null)
-            {
-                var curso = _cursoRepositorio.RecuperarPorNome(dto.Curso1);
-                aluno.Inscrever(curso, Enum.Parse<Grade>(dto.Curso1Grade));
-            }
+            var result = _messages.Dispatch(registrarCommand);
 
-            if (dto.Curso2 != null && dto.Curso2Grade != null)
-            {
-                var curso = _cursoRepositorio.RecuperarPorNome(dto.Curso2);
-                aluno.Inscrever(curso, Enum.Parse<Grade>(dto.Curso2Grade));
-            }
-
-            _alunoRepositorio.Salvar(aluno);
-            _unitOfWork.Commit();
-
-            return Ok();
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Desregistrar(long id)
         {
-            var aluno = _alunoRepositorio.RecuperarPorId(id);
+            var desregistrarCommand = new DesregistrarAlunoCommand(id);
 
-            if (aluno == null)
-                return Error($"Nenhum aluno encontrado com o Id {id}");
+            var result = _messages.Dispatch(desregistrarCommand);
 
-            _alunoRepositorio.Excluir(aluno);
-            _unitOfWork.Commit();
-
-            return Ok();
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
 
         [HttpPost("{id}/inscricoes")]
         public IActionResult Inscrever(long id, [FromBody]AlunoInscricaoDto dto)
         {
-            var aluno = _alunoRepositorio.RecuperarPorId(id);
+            var inscreverCursoCommand = new InscreverCursoCommand(id, dto.Curso, dto.Grade);
 
-            if (aluno == null)
-                return Error($"Nenhum aluno encontrado com o Id {id}");
+            var result = _messages.Dispatch(inscreverCursoCommand);
 
-            var curso = _cursoRepositorio.RecuperarPorNome(dto.Curso);
-
-            if (curso == null)
-                return Error($"O curso é incorreto: {dto.Curso}.");
-
-            var gradeSucesso = Enum.TryParse(dto.Grade, out Grade grade);
-
-            if (!gradeSucesso)
-                return Error($"A grade é incorreta: {dto.Grade}.");
-
-            aluno.Inscrever(curso, grade);
-            _unitOfWork.Commit();
-
-            return Ok();
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
 
         [HttpPut("{id}/inscricoes/{numeroInscricao}")]
         public IActionResult Transferir(long id, int numeroInscricao, [FromBody]AlunoTransferenciaDto dto)
         {
-            var aluno = _alunoRepositorio.RecuperarPorId(id);
+            var transferirCommand = new TransferirCursoCommand(id, numeroInscricao, dto.Curso, dto.Grade);
 
-            if (aluno == null)
-                return Error($"Nenhum aluno encontrado com o Id {id}");
+            var result = _messages.Dispatch(transferirCommand);
 
-            var curso = _cursoRepositorio.RecuperarPorNome(dto.Curso);
-
-            if (curso == null)
-                return Error($"O curso é incorreto: {dto.Curso}.");
-
-            var gradeSucesso = Enum.TryParse(dto.Grade, out Grade grade);
-
-            if (!gradeSucesso)
-                return Error($"A grade é incorreta: {dto.Grade}.");
-
-            var inscricao = aluno.RecuperarInscricao(numeroInscricao);
-
-            if (inscricao == null)
-                return Error($"Nenhuma inscrição encontrada com o número: {numeroInscricao}");
-
-            inscricao.Atualizar(curso, grade);
-            _unitOfWork.Commit();
-
-            return Ok();
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
 
         [HttpPost("{id}/inscricoes/{numeroInscricao}/excluir")]
-        public IActionResult Desinscricao(long id, int numeroInscricao, [FromBody]AlunoDesinscricaoDto dto)
+        public IActionResult Desinscrever(long id, int numeroInscricao, [FromBody]AlunoDesinscricaoDto dto)
         {
-            var aluno = _alunoRepositorio.RecuperarPorId(id);
+            var desinscreverCursoCommand = new DesinscreverCursoCommand(id, numeroInscricao, dto.Comentario);
 
-            if (aluno == null)
-                return Error($"Nenhum aluno encontrado com o Id {id}");
+            var result = _messages.Dispatch(desinscreverCursoCommand);
 
-            if (string.IsNullOrWhiteSpace(dto.Comentario))
-                return Error("Comentário de desinscrição é requerido.");
-
-            var inscricao = aluno.RecuperarInscricao(numeroInscricao);
-
-            if (inscricao == null)
-                return Error($"Nenhuma inscrição encontrada com o número: {numeroInscricao}");
-            aluno.RemoverInscricao(inscricao, dto.Comentario);
-
-            _unitOfWork.Commit();
-
-            return Ok();
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
 
         [HttpPut("{id}")]
@@ -154,7 +92,7 @@ namespace API.Controllers
                 Nome = dto.Nome,
                 Email = dto.Email
             };
-            
+
             var result = _messages.Dispatch(command);
 
             return result.IsSuccess ? Ok() : BadRequest(result.Error);

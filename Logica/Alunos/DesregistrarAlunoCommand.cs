@@ -3,16 +3,26 @@ using Logica.Utils;
 
 namespace Logica.Alunos
 {
-    public sealed class EditarInformacoesPessoaisCommandHandler : ICommandHandler<EditarInformacoesPessoaisCommand>
+    public sealed class DesregistrarAlunoCommand : ICommand
+    {
+        public DesregistrarAlunoCommand(long id)
+        {
+            Id = id;
+        }
+
+        public long Id { get; }
+    }
+
+    public sealed class DesregistrarAlunoCommandHandler : ICommandHandler<DesregistrarAlunoCommand>
     {
         private readonly UnitOfWork _unitOfWork;
 
-        public EditarInformacoesPessoaisCommandHandler(UnitOfWork unitOfWork)
+        public DesregistrarAlunoCommandHandler(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public Result Handle(EditarInformacoesPessoaisCommand command)
+        public Result Handle(DesregistrarAlunoCommand command)
         {
             var alunoRepositorio = new AlunoRepositorio(_unitOfWork);
 
@@ -21,9 +31,7 @@ namespace Logica.Alunos
             if (aluno == null)
                 return Result.Fail($"Nenhum aluno encontrado com o Id {command.Id}");
 
-            aluno.Nome = command.Nome;
-            aluno.Email = command.Email;
-
+            alunoRepositorio.Excluir(aluno);
             _unitOfWork.Commit();
 
             return Result.Ok();
