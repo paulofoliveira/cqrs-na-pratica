@@ -1,5 +1,6 @@
 ﻿using API.Utils;
 using Logica.Alunos;
+using Logica.Decorators;
 using Logica.Models;
 using Logica.Utils;
 using Microsoft.AspNetCore.Builder;
@@ -22,6 +23,9 @@ namespace API
         {
             services.AddMvc();
 
+            var config = new Config(3);
+            services.AddSingleton(config);
+
             services.AddSingleton(new SessionFactory(Configuration["ConnectionString"]));
 
             services.AddTransient<UnitOfWork>();
@@ -32,7 +36,11 @@ namespace API
 
             // Commands:
 
-            services.AddTransient<ICommandHandler<EditarInformacoesPessoaisCommand>, EditarInformacoesPessoaisCommandHandler>();
+            services.AddTransient<ICommandHandler<EditarInformacoesPessoaisCommand>>(sp =>
+            {
+                return new DatabaseRetryDecorator<EditarInformacoesPessoaisCommand>(new EditarInformacoesPessoaisCommandHandler(sp.GetService<SessionFactory>()), sp.GetService<Config>());
+            });
+
             services.AddTransient<ICommandHandler<DesinscreverCursoCommand>, DesinscreverCursoCommandHandler>();
             services.AddTransient<ICommandHandler<TransferirCursoCommand>, TransferirCursoCommandHandler>();
             services.AddTransient<ICommandHandler<InscreverCursoCommand>, InscreverCursoCommandHandler>();

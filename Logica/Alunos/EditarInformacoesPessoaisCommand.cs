@@ -12,16 +12,17 @@ namespace Logica.Alunos
 
     public sealed class EditarInformacoesPessoaisCommandHandler : ICommandHandler<EditarInformacoesPessoaisCommand>
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly SessionFactory _sessionFactory;
 
-        public EditarInformacoesPessoaisCommandHandler(UnitOfWork unitOfWork)
+        public EditarInformacoesPessoaisCommandHandler(SessionFactory sessionFactory)
         {
-            _unitOfWork = unitOfWork;
+            _sessionFactory = sessionFactory;
         }
 
         public Result Handle(EditarInformacoesPessoaisCommand command)
         {
-            var alunoRepositorio = new AlunoRepositorio(_unitOfWork);
+            var unitOfWork = new UnitOfWork(_sessionFactory);
+            var alunoRepositorio = new AlunoRepositorio(unitOfWork);
 
             var aluno = alunoRepositorio.RecuperarPorId(command.Id);
 
@@ -31,7 +32,7 @@ namespace Logica.Alunos
             aluno.Nome = command.Nome;
             aluno.Email = command.Email;
 
-            _unitOfWork.Commit();
+            unitOfWork.Commit();
 
             return Result.Ok();
         }
