@@ -38,7 +38,7 @@ namespace API
 
             services.AddTransient<ICommandHandler<EditarInformacoesPessoaisCommand>>(sp =>
             {
-                return new DatabaseRetryDecorator<EditarInformacoesPessoaisCommand>(new EditarInformacoesPessoaisCommandHandler(sp.GetService<SessionFactory>()), sp.GetService<Config>());
+                return new AuditLoggingDecorator<EditarInformacoesPessoaisCommand>(new DatabaseRetryDecorator<EditarInformacoesPessoaisCommand>(new EditarInformacoesPessoaisCommandHandler(sp.GetService<SessionFactory>()), sp.GetService<Config>()));
             });
 
             services.AddTransient<ICommandHandler<DesinscreverCursoCommand>, DesinscreverCursoCommandHandler>();
