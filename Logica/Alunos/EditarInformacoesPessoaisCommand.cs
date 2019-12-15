@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Logica.Decorators;
 using Logica.Utils;
 
 namespace Logica.Alunos
@@ -10,6 +11,7 @@ namespace Logica.Alunos
         public string Email { get; set; }
     }
 
+    [DatabaseRetry]
     public sealed class EditarInformacoesPessoaisCommandHandler : ICommandHandler<EditarInformacoesPessoaisCommand>
     {
         private readonly SessionFactory _sessionFactory;

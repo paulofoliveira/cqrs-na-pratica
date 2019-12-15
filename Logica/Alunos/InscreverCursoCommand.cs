@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Logica.Decorators;
 using Logica.Utils;
 using System;
 
@@ -17,6 +18,7 @@ namespace Logica.Alunos
         public string Grade { get; }
     }
 
+    [DatabaseRetry]
     public sealed class InscreverCursoCommandHandler : ICommandHandler<InscreverCursoCommand>
     {
         private readonly UnitOfWork _unitOfWork;

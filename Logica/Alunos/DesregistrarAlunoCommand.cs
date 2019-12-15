@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Logica.Decorators;
 using Logica.Utils;
 
 namespace Logica.Alunos
@@ -13,6 +14,7 @@ namespace Logica.Alunos
         public long Id { get; }
     }
 
+    [DatabaseRetry]
     public sealed class DesregistrarAlunoCommandHandler : ICommandHandler<DesregistrarAlunoCommand>
     {
         private readonly UnitOfWork _unitOfWork;

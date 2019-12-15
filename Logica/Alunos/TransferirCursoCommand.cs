@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Logica.Decorators;
 using Logica.Utils;
 using System;
 
@@ -20,6 +21,7 @@ namespace Logica.Alunos
         public string Grade { get; set; }
     }
 
+    [DatabaseRetry]
     public sealed class TransferirCursoCommandHandler : ICommandHandler<TransferirCursoCommand>
     {
         private readonly UnitOfWork _unitOfWork;
