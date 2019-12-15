@@ -30,22 +30,7 @@ namespace API
 
             services.AddTransient<UnitOfWork>();
 
-            // Queries:
-
-            services.AddTransient<IQueryHandler<RecuperarAlunosQuery, List<AlunoDto>>, RecuperarAlunosQueryHandler>();
-
-            // Commands:
-
-            services.AddTransient<ICommandHandler<EditarInformacoesPessoaisCommand>>(sp =>
-            {
-                return new AuditLoggingDecorator<EditarInformacoesPessoaisCommand>(new DatabaseRetryDecorator<EditarInformacoesPessoaisCommand>(new EditarInformacoesPessoaisCommandHandler(sp.GetService<SessionFactory>()), sp.GetService<Config>()));
-            });
-
-            services.AddTransient<ICommandHandler<DesinscreverCursoCommand>, DesinscreverCursoCommandHandler>();
-            services.AddTransient<ICommandHandler<TransferirCursoCommand>, TransferirCursoCommandHandler>();
-            services.AddTransient<ICommandHandler<InscreverCursoCommand>, InscreverCursoCommandHandler>();
-            services.AddTransient<ICommandHandler<DesregistrarAlunoCommand>, DesregistrarAlunoCommandHandler>();
-            services.AddTransient<ICommandHandler<RegistrarAlunoCommand>, RegistrarAlunoCommandHandler>();
+            services.AddHandlers();
 
             services.AddSingleton<Messages>();
         }
