@@ -23,8 +23,8 @@ namespace Logica.Alunos
 
         public Result Handle(EditarInformacoesPessoaisCommand command)
         {
-            var unitOfWork = new UnitOfWork(_sessionFactory);
-            var alunoRepositorio = new AlunoRepositorio(unitOfWork);
+            var uow = new UnitOfWork(_sessionFactory);
+            var alunoRepositorio = new AlunoRepositorio(uow);
 
             var aluno = alunoRepositorio.RecuperarPorId(command.Id);
 
@@ -34,7 +34,7 @@ namespace Logica.Alunos
             aluno.Nome = command.Nome;
             aluno.Email = command.Email;
 
-            unitOfWork.Commit();
+            uow.Commit();
 
             return Result.Ok();
         }

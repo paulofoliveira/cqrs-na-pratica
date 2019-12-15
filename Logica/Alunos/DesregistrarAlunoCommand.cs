@@ -17,16 +17,18 @@ namespace Logica.Alunos
     [DatabaseRetry]
     public sealed class DesregistrarAlunoCommandHandler : ICommandHandler<DesregistrarAlunoCommand>
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly SessionFactory _sesionFactory;
 
-        public DesregistrarAlunoCommandHandler(UnitOfWork unitOfWork)
+        public DesregistrarAlunoCommandHandler(SessionFactory sessionFactory)
         {
-            _unitOfWork = unitOfWork;
+            _sesionFactory = sessionFactory;
         }
 
         public Result Handle(DesregistrarAlunoCommand command)
         {
-            var alunoRepositorio = new AlunoRepositorio(_unitOfWork);
+            var uow = new UnitOfWork(_sesionFactory);
+
+            var alunoRepositorio = new AlunoRepositorio(uow);
 
             var aluno = alunoRepositorio.RecuperarPorId(command.Id);
 
@@ -34,7 +36,7 @@ namespace Logica.Alunos
                 return Result.Fail($"Nenhum aluno encontrado com o Id {command.Id}");
 
             alunoRepositorio.Excluir(aluno);
-            _unitOfWork.Commit();
+            uow.Commit();
 
             return Result.Ok();
         }

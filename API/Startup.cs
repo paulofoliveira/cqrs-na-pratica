@@ -28,8 +28,6 @@ namespace API
 
             services.AddSingleton(new SessionFactory(Configuration["ConnectionString"]));
 
-            services.AddTransient<UnitOfWork>();
-
             services.AddHandlers();
 
             services.AddSingleton<Messages>();

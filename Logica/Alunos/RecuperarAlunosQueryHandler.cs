@@ -7,16 +7,17 @@ namespace Logica.Alunos
 {
     public sealed class RecuperarAlunosQueryHandler : IQueryHandler<RecuperarAlunosQuery, List<AlunoDto>>
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly SessionFactory _sessionFactory;
 
-        public RecuperarAlunosQueryHandler(UnitOfWork unitOfWork)
+        public RecuperarAlunosQueryHandler(SessionFactory sessionFactory)
         {
-            _unitOfWork = unitOfWork;
+            _sessionFactory = sessionFactory;
         }
 
         public List<AlunoDto> Handle(RecuperarAlunosQuery query)
         {
-            var alunos = new AlunoRepositorio(_unitOfWork).RecuperarLista(query.CursoNome, query.Numero);
+            var uow = new UnitOfWork(_sessionFactory);
+            var alunos = new AlunoRepositorio(uow).RecuperarLista(query.CursoNome, query.Numero);
             var dtos = alunos.Select(p => ConverterParaDto(p)).ToList();
             return dtos;
         }

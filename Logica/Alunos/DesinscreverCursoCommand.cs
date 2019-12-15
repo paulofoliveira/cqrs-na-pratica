@@ -21,16 +21,17 @@ namespace Logica.Alunos
     [DatabaseRetry]
     public sealed class DesinscreverCursoCommandHandler : ICommandHandler<DesinscreverCursoCommand>
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly SessionFactory _sessionfactory;
 
-        public DesinscreverCursoCommandHandler(UnitOfWork unitOfWork)
+        public DesinscreverCursoCommandHandler(SessionFactory sessionFactory)
         {
-            _unitOfWork = unitOfWork;
+            _sessionfactory = sessionFactory;
         }
 
         public Result Handle(DesinscreverCursoCommand command)
         {
-            var alunoRepositorio = new AlunoRepositorio(_unitOfWork);
+            var uow = new UnitOfWork(_sessionfactory);
+            var alunoRepositorio = new AlunoRepositorio(uow);
 
             var aluno = alunoRepositorio.RecuperarPorId(command.Id);
 
@@ -46,7 +47,7 @@ namespace Logica.Alunos
                 return Result.Fail($"Nenhuma inscrição encontrada com o número: {command.NumeroInscricao}");
             aluno.RemoverInscricao(inscricao, command.Comentario);
 
-            _unitOfWork.Commit();
+            uow.Commit();
 
             return Result.Ok();
         }
