@@ -26,7 +26,9 @@ namespace API
             var config = new Config(3);
             services.AddSingleton(config);
 
-            services.AddSingleton(new ConnectionString(Configuration["ConnectionString"]));
+            services.AddSingleton(new CommandsConnectionString(Configuration["ConnectionString"]));
+            services.AddSingleton(new QueriesConnectionString(Configuration["QueriesConnectionString"]));
+
             services.AddSingleton<SessionFactory>();
 
             services.AddHandlers();

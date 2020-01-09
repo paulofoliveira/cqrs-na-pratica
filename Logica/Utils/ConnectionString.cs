@@ -1,8 +1,18 @@
 ﻿namespace Logica.Utils
 {
-    public sealed class ConnectionString
+    public sealed class CommandsConnectionString
     {
-        public ConnectionString(string value)
+        public CommandsConnectionString(string value)
+        {
+            Value = value;
+        }
+
+        public string Value { get; }
+    }
+
+    public sealed class QueriesConnectionString
+    {
+        public QueriesConnectionString(string value)
         {
             Value = value;
         }
